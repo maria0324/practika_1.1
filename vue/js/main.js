@@ -2,9 +2,10 @@ let app = new Vue({
     el: '#app',
     data: {
         product: "Socks",
+        brand: 'Vue Mastery',
         image: "./assets/vmSocks-green-onWhite.jpg",
         altText: "A pair of socks",
-        inStock: false,
+        inStock: true,
         details: ['80% cotton', '20% polyester', 'Gender-neutral'],
         variants: [
             {
@@ -18,8 +19,18 @@ let app = new Vue({
                 variantImage: "./assets/vmSocks-blue-onWhite.jpg",
             }
         ],
-        cart: 0
+        cart: 0,
+        onSale : false
     },
+    computed: {
+        title() {
+            return this.brand + ' ' + this.product;
+        },
+        sale(){
+            return this.onSale ? `${this.brand} ${this.product} проводит распродажу!` : `${this.brand} ${this.product} не проводит распродажу.`;
+        }
+     },
+     
     methods: {
         addToCart() {
             this.cart += 1
