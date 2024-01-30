@@ -1,17 +1,3 @@
-Vue.component('product-details', { 
-    props: { 
-        details: { 
-            type: Array, 
-            required: true 
-        } 
-    }, 
-    template: ` 
-    <ul> 
-        <li v-for="detail in details">{{ detail }}</li> 
-    </ul> 
-    ` 
-}) 
- 
 Vue.component('product', { 
     props: { 
         premium: { 
@@ -29,7 +15,9 @@ Vue.component('product', {
             <h1>{{ title }}</h1> 
             <p v-if="inStock">In stock</p> 
             <p v-else>Out of Stock</p> 
-            <product-details :details="details"></product-details> 
+            <ul> 
+                <li v-for="detail in details">{{ detail }}</li> 
+            </ul> 
             <p>User is premium: {{ premium }}</p> 
             <p>Shipping: {{ shipping }}</p> 
             <div 
@@ -41,9 +29,7 @@ Vue.component('product', {
             ></div> 
             </div> 
       
-            <div class="cart"> 
-                <p>Cart({{ cart }})</p> 
-            </div> 
+           
              
             <button 
                     v-on:click="addToCart" 
@@ -51,6 +37,13 @@ Vue.component('product', {
                     :class="{ disabledButton: !inStock }" 
             > 
                 Add to cart 
+            </button> 
+            <button 
+                    v-on:click="removeFromCart" 
+                    :disabled="!inStock || cart.length === 0" 
+                    :class="{ disabledButton: !inStock || cart.length === 0 }" 
+            > 
+                Remove from cart 
             </button> 
         </div> 
     </div> 
@@ -81,7 +74,10 @@ Vue.component('product', {
     }, 
     methods: { 
         addToCart() { 
-            this.cart += 1 
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId); 
+        }, 
+        removeFromCart() { 
+            this.$emit('remove-from-cart', this.variants[this.selectedVariant].variantId); 
         }, 
         updateProduct(index) { 
             this.selectedVariant = index; 
@@ -111,6 +107,18 @@ Vue.component('product', {
 let app = new Vue({ 
     el: '#app', 
     data: { 
-        premium: true 
+        premium: true, 
+        cart: [] 
+    }, 
+    methods: { 
+        updateCart(id) { 
+            this.cart.push(id); 
+        }, 
+        removeFromCart(id) { 
+            const index = this.cart.indexOf(id); 
+            if (index > -1) { 
+                this.cart.splice(index, 1); 
+            } 
+        } 
     } 
 })
